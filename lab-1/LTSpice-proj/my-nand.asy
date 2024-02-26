@@ -7,7 +7,6 @@ LINE Normal 97 0 64 0
 LINE Normal -64 -16 -31 -16
 LINE Normal -64 16 -31 16
 LINE Normal 0 -64 0 -32
-LINE Normal 0 64 0 32
 CIRCLE Normal 64 -9 47 8
 ARC Normal -16 -32 47 32 16 48 16 -48
 PIN 96 0 BOTTOM 8
@@ -22,6 +21,3 @@ PINATTR SpiceOrder 3
 PIN 0 -64 LEFT 8
 PINATTR PinName VDD
 PINATTR SpiceOrder 4
-PIN 0 64 LEFT 8
-PINATTR PinName VSS
-PINATTR SpiceOrder 5
