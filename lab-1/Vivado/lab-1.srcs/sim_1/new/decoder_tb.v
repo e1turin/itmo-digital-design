@@ -20,8 +20,10 @@ decoder decoder_test(
 );
 
 
-initial begin
-    for(i = 0; i < 8; i = i + 1) begin
+initial 
+begin
+    for(i = 0; i < 8; i = i + 1) 
+    begin
         s = i;
         en = 1;
         
@@ -34,7 +36,7 @@ initial begin
         else 
         begin
             $display("Fail: s=%b, d=%b, en=%b, i=%0d", s, d_test, en, i);
-            $display("Expect: s=%b, d=%b, en=%b, i=%0d", s,d_golden,en,i);
+            $display("Expect: s=%b, d=%b, en=%b, i=%0d", s, d_golden, en, i);
         end
 
         en = 0;
@@ -48,7 +50,7 @@ initial begin
         else 
         begin
             $display("Fail: s=%b, d=%b, en=%b, i=%0d", s, d_test, en, i);
-            $display("Expect: s=%b, d=%b, en=%b, i=%0d", s,d_golden,en,i);
+            $display("Expect: s=%b, d=%b, en=%b, i=%0d", s, d_golden, en, i);
         end
      end
      #10 $stop;
