@@ -22,18 +22,19 @@ module decoder_tb;
             #10
 
             if (d == 2**i) begin
-                $display("Correct! s=%b, d=%b, en=%b, i=%0d", s, d, en, i);
+                $display("OK: s=%b, d=%b, en=%b, i=%0d", s, d, en, i);
             end else begin
-                $display("Incorrect! s=%b, d=%b, en=%b, i=%0d", s, d, en, i);
+                $display("Fail: s=%b, d=%b, en=%b, i=%0d", s, d, en, i);
             end
 
-            en = 0; 
+            en = 0;
+             
             #10
 
             if (d == 0) begin
-                $display("Correct! s=%b, d=%b, en=%b, i=%0d", s, d, en, i);
+                $display("OK: s=%b, d=%b, en=%b, i=%0d", s, d, en, i);
             end else begin
-                $display("Incorrect! s=%b, d=%b, en=%b, i=%0d", s, d, en, i);
+                $display("Fail: s=%b, d=%b, en=%b, i=%0d", s, d, en, i);
             end
                     
          end
