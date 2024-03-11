@@ -3,16 +3,22 @@
 module decoder_tb;
 
     reg [2:0] s;
-    wire[7:0] d;
+    wire[7:0] d_golden, d_test;
     reg en;
-    
     integer i;
     
-    decoder decoder_1(
+    decoder_golden decoder_goldn(
         .s(s),
-        .d(d),
-        .en(en)
+        .en(en),
+        .d(d_golden)
     );
+    
+    decoder decoder_test(
+        .s(s),
+        .en(en),
+        .d(d_test)
+    );
+    
     
     initial begin
         for(i = 0; i < 8; i = i+1) begin
@@ -21,25 +27,29 @@ module decoder_tb;
             
             #10
 
-            if (d == 2**i) begin
-                $display("OK: s=%b, d=%b, en=%b, i=%0d", s, d, en, i);
-            end else begin
-                $display("Fail: s=%b, d=%b, en=%b, i=%0d", s, d, en, i);
+            if (d_test == d_golden) begin
+                $display("OK: s=%b, d=%b, en=%b, i=%0d", s, d_test, en, i);
+            end 
+            else 
+            begin
+                $display("Fail: s=%b, d=%b, en=%b, i=%0d", s, d_test, en, i);
+                $display("Expect: s=%b, d=%b, en=%b, i=%0d", s, d_golden, en, i);
             end
 
             en = 0;
              
             #10
 
-            if (d == 0) begin
-                $display("OK: s=%b, d=%b, en=%b, i=%0d", s, d, en, i);
-            end else begin
-                $display("Fail: s=%b, d=%b, en=%b, i=%0d", s, d, en, i);
+            if (d_test == d_golden) begin
+                $display("OK: s=%b, d=%b, en=%b, i=%0d", s, d_test, en, i);
+            end 
+            else 
+            begin
+                $display("Fail: s=%b, d=%b, en=%b, i=%0d", s, d_test, en, i);
+                $display("Expect: s=%b, d=%b, en=%b, i=%0d", s, d_golden, en, i);
             end
-                    
          end
          #10 $stop;
-         
     end
 endmodule
 
