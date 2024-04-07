@@ -1,0 +1,19 @@
+# IGNORE ALL
+sequential-logic/sequential-logic.cache/*
+sequential-logic/sequential-logic.cache/**
+sequential-logic/sequential-logic.hw/*
+sequential-logic/sequential-logic.hw/**
+sequential-logic/sequential-logic.ip_user_files/*
+sequential-logic/sequential-logic.ip_user_files/**
+sequential-logic/sequential-logic.sim/*
+sequential-logic/sequential-logic.sim/**
+sequential-logic/sequential-logic.xpr/*
+sequential-logic/sequential-logic.xpr/**
+
+# tmp files
+*~ 
+
+# EXCEPT SOURCES
+!sequential-logic\sequential-logic.srcs/*
+!sequential-logic\sequential-logic.srcs/**
+
