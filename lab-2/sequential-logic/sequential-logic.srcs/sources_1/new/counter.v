@@ -1,19 +1,20 @@
 `timescale 1ns / 1ps
 
 module counter
+#(parameter N)
 (
-  input   logic       clk,
-  input   logic [2:0] cin,
-  input   logic       set, en,
-  input   logic       rst, // async
-  output  logic [2:0] cout
+  input   logic         clk,
+  input   logic [N-1:0] cin,
+  input   logic         set, en,
+  input   logic         rst, // async
+  output  logic [N-1:0] cout
 );
 
 always @(posedge clk, posedge rst) 
 begin
-  if (set & cin <= 5)
+  if (set)
     cout <= cin;
-  else if (rst | (cout == 5)) // should it be '>=5' ?
+  else if (rst) // should it be '>=5' ?
     cout <= 0;
   else if (en)      
     cout <= cout + 1;
