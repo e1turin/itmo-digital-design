@@ -2,15 +2,17 @@
 
 module shiftreg
 #(
-  parameter N = 8
+  parameter DEPTH = 8
 ) (
   input   logic         clk,
-  input   logic         reset, load,
-  input   logic         sin,
-  input   logic [N-1:0] d,
-  output  logic [N-1:0] q,
+  input   logic             reset, load,
+  input   logic             sin,
+  input   logic [DEPTH-1:0] d,
+  output  logic [DEPTH-1:0] q,
   output  logic         sout
 );
+
+assign sout = q[DEPTH-1];
 
 always_ff @(posedge clk, posedge reset) begin
   if (reset) 
@@ -18,9 +20,7 @@ always_ff @(posedge clk, posedge reset) begin
   else if (load) 
     q <= d;
   else 
-    q <= {q[N-2:0], sin};
+    q <= {q[DEPTH-2:0], sin};
 end
-
-assign sout = q[N-1];
 
 endmodule

@@ -9,6 +9,8 @@ sequential-logic/sequential-logic.sim/*
 sequential-logic/sequential-logic.sim/**
 sequential-logic/sequential-logic.xpr/*
 sequential-logic/sequential-logic.xpr/**
+sequential-logic/sequential-logic.runs/*
+sequential-logic/sequential-logic.runs/**
 
 # tmp files
 *~ 
