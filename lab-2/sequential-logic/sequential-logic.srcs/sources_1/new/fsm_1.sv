@@ -1,5 +1,41 @@
 `timescale 1ns / 1ps
 
+module adder # (
+  parameter N = 8
+) (
+  input   logic [N-1:0] a,
+  input   logic [N-1:0] b,
+  output  logic [N-1:0] res
+);
+  
+  always_comb
+    res = a + b;
+
+endmodule
+
+module multiplier # (
+  parameter N = 2
+) (
+  input   logic [N-1:0] a,
+  output  logic [N-1:0] res
+);
+
+  always_comb
+    res = a << N;
+
+endmodule
+
+module divider # (
+  parameter N = 2
+) (
+  input   logic [N-1:0] a,
+  output  logic [N-1:0] res
+);
+  
+  always_comb
+    res = a >> N;
+
+endmodule
 
 module fsm_1 # (
   parameter N = 8
@@ -23,63 +59,109 @@ module fsm_1 # (
 // | ^------4*-----^                               | : S7 :
 // |-------------------5+--------------------------| : S8 : S5
 
-typedef enum logic [2:0] {
-  S0, // waiting for input
-  S1, S2, S3, S4, S5
-} state_e;
+  typedef enum logic [3:0] {
+    S0, // waiting for input
+    S1,   
+    S2, 
+    S3_0, S3_1,
+    S4_0, S4_1, S4_2, 
+    S5
+  } state_e;
+  
+  state_e curr_state = S0;
+  state_e next_state = S0;
+  
+  logic [N-1:0] div_res;
+  logic [N-1:0] sum_res;
+  logic [N-1:0] mul_res;
 
-state_e curr_state = S0;
-state_e next_state = S0;
-
-logic [N-1:0] div_res;
-logic [N-1:0] sum_res;
-logic [N-1:0] mul_res;
-
-always_comb
-begin
-  next_state = curr_state;
-  case (curr_state)
-    S0 : next_state = S1;
-    S1 : next_state = S2;
-    S2 : next_state = S3;
-    S3 : next_state = S4;
-    S4 : next_state = S5;
-    S5 : next_state = S0;
-    default: next_state = S0;
-  endcase
-end
-
-always_ff @(posedge clk or posedge reset) 
-begin
-  if (reset) curr_state <= S0;
-  else       curr_state <= next_state;
-end
-
-always_ff @(posedge clk)
-begin
-  if (valid)
+  
+  logic [N-1:0] adder_a, adder_b;
+  logic [N-1:0] multiplier_2_a;
+  logic [N-1:0] divider_2_a;
+  
+  adder # ( 
+    .N ( 8 )
+  ) adder_1 (
+    .a   ( adder_a ),
+    .b   ( adder_b ),
+    .res ( sum_res )
+  );
+  
+  multiplier # ( 
+    .N ( 1 )
+  ) multiplier_4_1 (
+    .a   ( multiplier_2_a ),
+    .res ( mul_res        )
+  );
+  
+  divider # (
+    .N ( 1 )
+  ) divider_2_1 (
+    .a   ( divider_2_a ),
+    .res ( div_res     )
+  );
+  
+  always_comb
+  begin
+    next_state = curr_state;
     case (curr_state)
-      S1 : begin
-        div_res <= ~(b >> 1);
-        sum_res <= a + 1;
-      end
-      S2 : begin
-        div_res <= a >> 1;
-        sum_res <= sum_res + div_res;
-      end
-      S3 : begin
-        sum_res <= div_res + b;
-        mul_res <= sum_res << 2;
-      end
-      S4 : begin
-        mul_res <= sum_res << 3;
-        sum_res <= mul_res;
-      end
-      S5 : begin
-        result <= sum_res + mul_res;
-      end
+      S0    : next_state = S1;
+      S1    : next_state = S2;
+      S2    : next_state = S3_0;
+      S3_0  : next_state = S3_1;
+      S3_1  : next_state = S4_0;
+      S4_0  : next_state = S4_1;
+      S4_1  : next_state = S4_2;
+      S4_2  : next_state = S5;
+      S5 : next_state = S0;
+      default: next_state = S0;
     endcase
-end
-
-
+  end
+  
+  always_ff @(posedge clk or posedge reset) 
+  begin
+    if (reset) curr_state <= S0;
+    else       curr_state <= next_state;
+  end
+  
+  always_ff @(posedge clk)
+  begin
+    if (valid)
+      case (curr_state)
+        S1 : begin
+          divider_2_a <= b;
+          adder_a <= a;
+          adder_b <= 1;
+        end
+        S2 : begin
+          divider_2_a <= a;
+          adder_a <= sum_res;
+          adder_b <= div_res;
+        end
+        S3_0 : begin
+          adder_a <= div_res;
+          adder_b <= b;
+          multiplier_2_a <= sum_res;
+        end
+        S3_1 : begin
+          multiplier_2_a <= mul_res;
+        end
+        S4_0 : begin
+          adder_a <= mul_res;
+          adder_b <= 0;
+          multiplier_2_a <= sum_res;
+        end
+        S4_1 : begin
+          multiplier_2_a <= mul_res;
+        end
+        S4_2 : begin
+          multiplier_2_a <= mul_res;
+        end
+        S5 : begin
+          result <= sum_res + mul_res;
+        end
+      endcase
+  end
+  
 endmodule
