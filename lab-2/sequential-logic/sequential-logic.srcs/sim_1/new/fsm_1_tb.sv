@@ -3,7 +3,7 @@
 
 module fsm_1_tb;
   
-  localparam N = 8;
+  localparam N = 16;
   
   logic clk;
   logic reset;
@@ -18,12 +18,12 @@ module fsm_1_tb;
   fsm_1 # (
     .BIT_DEPTH ( N )
   ) dut (
-    .clk    ( clk         ),
-    .reset  ( reset       ),
-    .a      ( test_a      ), 
-    .b      ( test_b      ),
-    .valid  ( test_valid  ),
-    .result ( test_result )
+    .clk_i    ( clk         ),
+    .reset_i  ( reset       ),
+    .a_i      ( test_a      ), 
+    .b_i      ( test_b      ),
+    .valid_i  ( test_valid  ),
+    .result_o ( test_result )
   );
     
   //  always #10 clk = ~clk

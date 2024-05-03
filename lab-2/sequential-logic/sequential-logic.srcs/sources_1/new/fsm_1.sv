@@ -3,13 +3,13 @@
 module explicit_adder # (
   parameter BIT_DEPTH = 8
 ) (
-  input   logic [BIT_DEPTH-1:0] a,
-  input   logic [BIT_DEPTH-1:0] b,
-  output  logic [BIT_DEPTH-1:0] res
+  input   logic [BIT_DEPTH-1:0] a_i,
+  input   logic [BIT_DEPTH-1:0] b_i,
+  output  logic [BIT_DEPTH-1:0] sum_o
 );
 
   always_comb begin
-    res = a + b;
+    sum_o = a_i + b_i;
   end
 
 endmodule
@@ -17,12 +17,12 @@ endmodule
 module explicit_multiplier # (
   parameter BIT_DEPTH = 8
 ) (
-  input   logic [BIT_DEPTH-1:0] a,
-  output  logic [BIT_DEPTH-1:0] res
+  input   logic [BIT_DEPTH-1:0] a_i,
+  output  logic [BIT_DEPTH-1:0] product_o
 );
 
   always_comb begin
-    res = a << 1;
+    product_o = a_i << 1;
   end
     
 endmodule
@@ -30,12 +30,12 @@ endmodule
 module explicit_divider # (
   parameter BIT_DEPTH = 8
 ) (
-  input   logic [BIT_DEPTH-1:0] a,
-  output  logic [BIT_DEPTH-1:0] res
+  input   logic [BIT_DEPTH-1:0] a_i,
+  output  logic [BIT_DEPTH-1:0] quotient_o
 );
   
   always_comb begin
-    res = a >> 1;
+    quotient_o = a_i >> 1;
   end
     
 endmodule
@@ -43,11 +43,11 @@ endmodule
 module fsm_1 # (
   parameter BIT_DEPTH = 8
 ) (
-  input   logic                 clk,
-  input   logic                 reset, // async
-  input   logic [BIT_DEPTH-1:0] a, b,
-  input   logic                 valid,
-  output  logic [BIT_DEPTH-1:0] result
+  input   logic                 clk_i,
+  input   logic                 reset_i, // async
+  input   logic [BIT_DEPTH-1:0] a_i, b_i,
+  input   logic                 valid_i,
+  output  logic [BIT_DEPTH-1:0] result_o
 );
 
 // (A/2+B)*8 + (A-B/2)*4 = ((A>>1) + B)<<3 + (A + ~(B>>1) + 1)<<2
@@ -89,23 +89,23 @@ module fsm_1 # (
   explicit_adder # ( 
     .BIT_DEPTH ( BIT_DEPTH )
   ) adder_1 (
-    .a   ( adder_a ),
-    .b   ( adder_b ),
-    .res ( sum_res )
+    .a_i   ( adder_a ),
+    .b_i   ( adder_b ),
+    .sum_o ( sum_res )
   );
   
   explicit_multiplier # ( 
     .BIT_DEPTH ( BIT_DEPTH )
   ) multiplier_4_1 (
-    .a   ( multiplier_2_a ),
-    .res ( mul_res        )
+    .a_i       ( multiplier_2_a ),
+    .product_o ( mul_res        )
   );
   
   explicit_divider # (
     .BIT_DEPTH ( BIT_DEPTH )
   ) divider_2_1 (
-    .a   ( divider_2_a ),
-    .res ( div_res     )
+    .a_i        ( divider_2_a ),
+    .quotient_o ( div_res     )
   );
   
   always_comb
@@ -125,29 +125,29 @@ module fsm_1 # (
     endcase
   end
   
-  always_ff @(posedge clk or posedge reset) 
+  always_ff @(posedge clk_i or posedge reset_i) 
   begin
-    if (reset) curr_state <= S0;
-    else       curr_state <= next_state;
+    if (reset_i)  curr_state <= S0;
+    else          curr_state <= next_state;
   end
   
-  always_ff @(posedge clk)
+  always_ff @(posedge clk_i)
   begin
-    if (valid)
+    if (valid_i)
       case (curr_state)
         S1 : begin
-          divider_2_a <= b;
-          adder_a <= a;
+          divider_2_a <= b_i;
+          adder_a <= a_i;
           adder_b <= 1;
         end
         S2 : begin
-          divider_2_a <= a;
+          divider_2_a <= a_i;
           adder_a <= sum_res;
           adder_b <= ~div_res;
         end
         S3_0 : begin
           adder_a <= div_res;
-          adder_b <= b;
+          adder_b <= b_i;
           multiplier_2_a <= sum_res;
         end
         S3_1 : begin
@@ -169,7 +169,7 @@ module fsm_1 # (
           adder_b <= mul_res;
         end
         S6 : begin
-          result <= sum_res;
+          result_o <= sum_res;
         end
       endcase
   end

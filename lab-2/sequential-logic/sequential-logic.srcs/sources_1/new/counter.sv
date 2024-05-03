@@ -2,23 +2,21 @@
 
 module counter
 #(
-  parameter DEPTH = 8
+  parameter BIT_DEPTH = 8
 ) (
-  input   logic             clk,
-  input   logic [DEPTH-1:0] cin,
-  input   logic             set, enable,
-  input   logic             reset, // async
-  output  logic [DEPTH-1:0] cout
+  input   logic                 clk_i,
+  input   logic [BIT_DEPTH-1:0] count_i,
+  input   logic                 set_i, enable_i,
+  input   logic                 reset_i, // async
+  output  logic [BIT_DEPTH-1:0] count_o
 );
 
-always_ff @(posedge clk, posedge reset) begin
-  if (reset)
-    cout <= 0;
-  else if (enable)
-    if (set)
-      cout <= cin;
-    else 
-      cout <= cout + 1;
+always_ff @(posedge clk_i, posedge reset_i) begin
+  if (reset_i)  count_o <= 0;
+  else 
+    if (enable_i)
+      if (set_i)  count_o <= count_i;
+      else        count_o <= count_o + 1;
 end
 
 endmodule
