@@ -156,7 +156,7 @@ module fsm_1 # (
         S2 : begin
           divider_2_a <= a;
           adder_a <= sum_res;
-          adder_b <= div_res;
+          adder_b <= ~div_res; // <- important inversion
 //          result <= 2;
         end
         S3_0 : begin
@@ -192,7 +192,7 @@ module fsm_1 # (
           result <= sum_res;
         end
         default : begin 
-          result <= 8'd0;
+//          result <= 8'd0;
         end
       endcase
   end
