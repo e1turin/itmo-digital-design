@@ -26,21 +26,19 @@ module fsm_1_tb;
     .result_o ( test_result )
   );
     
-  //  always #10 clk = ~clk
+  always #20 clk = ~clk;
 
   initial 
   begin
     clk = 0;
-    reset = 1;
-    #10 reset = 0;
+    #10 reset = 1;
+    #20 reset = 0;
     #10 test_valid = 1;
     
-//    for (integer i = 0; i < 10; i = i + 1)
-    repeat(10)
-    begin
-      #10 clk = 1;
-      #10 clk = 0;
-    end
+    repeat(10) 
+      @(posedge clk);
+    
+    #10;
     if (test_result != expect_result % 2**N) 
     begin
       $error("result = %0d", test_result);
