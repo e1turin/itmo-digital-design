@@ -35,7 +35,8 @@ module fsm_1_tb;
     #10 reset = 0;
     #10 test_valid = 1;
     
-    for (integer i = 0; i < 10; i = i + 1)
+//    for (integer i = 0; i < 10; i = i + 1)
+    repeat(10)
     begin
       #10 clk = 1;
       #10 clk = 0;
@@ -50,7 +51,7 @@ module fsm_1_tb;
         2**N
       );
     end
-//    $stop;
+    #20 $finish;
   end
 
 endmodule
