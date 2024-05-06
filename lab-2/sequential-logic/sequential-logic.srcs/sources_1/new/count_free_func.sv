@@ -32,7 +32,7 @@ module count_free_func # (
   logic                 enable_count;
   logic                 set_count;
   logic [BIT_DEPTH-1:0] counter_input;
-  logic [BIT_DEPTH-1:0] count_rem;
+  logic [BIT_DEPTH-1:0] remaining_time;
     
   shiftreg # (
     .BIT_DEPTH ( BIT_DEPTH ),
@@ -51,13 +51,13 @@ module count_free_func # (
   counter # (
     .BIT_DEPTH ( BIT_DEPTH ),
     .TO_DOWN   ( 1         )
-  ) cnt (
-    .clk      ( clk         ),
-    .arst     ( rst         ),
-    .enable_i ( enable_count  ),
-    .set_i    ( set_count   ), 
-    .count_i  ( counter_input ),
-    .count_o  ( count_rem   )
+  ) timer (
+    .clk      ( clk             ),
+    .arst     ( rst             ),
+    .enable_i ( enable_count    ),
+    .set_i    ( set_count       ), 
+    .count_i  ( counter_input   ),
+    .count_o  ( remaining_time  )
   );
 
   assign counter_input = reader_output;
@@ -69,7 +69,7 @@ module count_free_func # (
     case (current_state)
       IDLE  : if (start_req_i)      next_state = READ;
       READ  : if (!start_req_i)     next_state = COUNT;
-      COUNT : if (count_rem == 'd0) next_state = AWAIT;
+      COUNT : if (!remaining_time)  next_state = AWAIT;
       AWAIT : if (ready_i)          next_state = WRITE;
       WRITE :                       next_state = IDLE;
 
@@ -94,7 +94,8 @@ module count_free_func # (
         enable_count = 'd1;
         set_count = 'd0;
       end
-      AWAIT: enable_count = 'd0;
+//      AWAIT: enable_count = 'd0;
+      
       default: ;// auto
     endcase
   end
