@@ -11,12 +11,12 @@ endinterface
 module arbiter # ( 
   parameter BIT_DEPTH = 8
 ) (
-  input logic clk,
-  transaction_if t_1_i, 
-  transaction_if t_2_i,
-  transaction_if t_3_i,
-  transaction_if t_4_i,
-  transaction_if t_o
+  input   logic   clk,
+  transaction_if  t_1_i, 
+  transaction_if  t_2_i,
+  transaction_if  t_3_i,
+  transaction_if  t_4_i,
+  transaction_if  t_o
 );
 
   assign t_o.data = t_1_i.data;
