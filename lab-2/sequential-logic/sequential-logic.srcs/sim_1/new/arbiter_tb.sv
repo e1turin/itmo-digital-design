@@ -49,7 +49,7 @@ module arbiter_tb;
     t_3.valid = 'd0;
     t_4.valid = 'd0;
     #15 arst = 'd1;
-    #10  arst = 'd0;
+    #10 arst = 'd0;
     #5;
     if (!ready) $error("Arbiter not ready after reset");
 
@@ -63,15 +63,19 @@ module arbiter_tb;
     t_1.valid = 'd1;
     t_2.valid = 'd1;
 
-    #5;
-    if (ready) $error("Arbiter ready when transaction exists");
-    
     repeat(2)
     begin
       @(posedge clk);
-      $display("data out = %0d and valid = %0d", test_data_out, test_valid_out);
+      #5 $display("data out = %0d and valid = %0d", test_data_out, test_valid_out);
+      if (ready) $error("Arbiter ready when transaction exists");
     end
     
+    t_1.valid = 'd0;
+    t_2.valid = 'd0;
+    t_3.valid = 'd0;
+    t_4.valid = 'd0;
+    
+    @(posedge clk);
     #5;
     t_1.valid = 'd0;
     t_2.valid = 'd1;
@@ -81,12 +85,11 @@ module arbiter_tb;
     repeat(3)
     begin
       @(posedge clk);
-      $display("data out = %0d and valid = %0d", test_data_out, test_valid_out);
+      #5 $display("data out = %0d and valid = %0d", test_data_out, test_valid_out);
+      if (ready) $error("Arbiter ready when transaction exists");
     end
     
-    #20;
-//    #10 $display("%0d = %0d and %0d", test_data, test_data_out, test_valid_out);
-    $finish;
+    #20 $finish;
   end
 
 endmodule

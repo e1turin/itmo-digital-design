@@ -5,7 +5,7 @@ module count_free_func # (
   parameter BIT_DEPTH = 8
 ) (
   input   logic clk,
-  input   logic rst,
+  input   logic arst,
   input   logic start_req_i,
   input   logic start_data_i,
   input   logic ready_i,
@@ -28,7 +28,8 @@ module count_free_func # (
   logic                 enable_reader;
   logic                 next_bit;
   logic [BIT_DEPTH-1:0] reader_output;
-  
+
+  logic                 reset_timer;
   logic                 enable_count;
   logic                 set_count;
   logic [BIT_DEPTH-1:0] counter_input;
@@ -53,7 +54,7 @@ module count_free_func # (
     .TO_DOWN   ( 1         )
   ) timer (
     .clk      ( clk             ),
-    .arst     ( rst             ),
+    .arst     ( reset_timer     ),
     .enable_i ( enable_count    ),
     .set_i    ( set_count       ), 
     .count_i  ( counter_input   ),
@@ -81,29 +82,36 @@ module count_free_func # (
   always_comb 
   begin
     case (current_state)
-      IDLE: reset_reader = 'd1;
+      IDLE: begin
+        reset_reader = 'd1;
+        reset_timer  = 'd1;
+      end
       READ: begin
-        reset_reader = 'd0;
+        reset_reader  = 'd0;
         enable_reader = 'd1;
-        next_bit = start_data_i;
-        enable_count = 'd1;
-        set_count = 'd1;
+        next_bit      = start_data_i;
+        enable_count  = 'd1;
+        set_count     = 'd1;
       end
       COUNT: begin
         enable_reader = 'd0;
-        enable_count = 'd1;
-        set_count = 'd0;
+        enable_count  = 'd1;
+        set_count     = 'd0;
       end
-            
-      default: ;// auto
+ 
+      default: begin
+        enable_count = 'd0;
+        reset_reader = 'd1;
+        reset_timer  = 'd1;
+      end
     endcase
   end
 
   // change current state
-  always_ff @(posedge clk or posedge rst)
+  always_ff @(posedge clk or posedge arst)
   begin
-    if (rst) current_state <= IDLE;
-    else     current_state <= next_state;
+    if (arst) current_state <= IDLE;
+    else      current_state <= next_state;
   end
 
   // determine output according to current state
@@ -131,11 +139,6 @@ module count_free_func # (
       WRITE: begin
         busy_o       = 'd1;
         result_rsp_o = 'd1;
-      end
-      
-      default: begin // if error?
-        busy_o       = 'dx;
-        result_rsp_o = 'dx;
       end
     endcase    
   end
