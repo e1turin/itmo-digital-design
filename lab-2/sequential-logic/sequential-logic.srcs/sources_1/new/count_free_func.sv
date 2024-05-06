@@ -109,29 +109,35 @@ module count_free_func # (
   // determine output according to current state
   always_comb
   begin
-    if (current_state == IDLE) 
-    begin
-      busy_o       = 'd0;
-      result_rsp_o = 'd0;
-    end
-    else if (current_state == READ || current_state == COUNT)
-    begin
-      busy_o       = 'd1;
-      result_rsp_o = 'd0;
+    case(current_state)
+      IDLE: begin
+        busy_o       = 'd0;
+        result_rsp_o = 'd0;
+      end
+      READ: begin
+        busy_o       = 'd1;
+        result_rsp_o = 'd0;
+      end
+      COUNT: begin
+        busy_o       = 'd1;
+        result_rsp_o = 'd0;
+        // exclude extra delay before response
+        if (next_state == AWAIT) result_rsp_o = 'd1;
+      end
+      AWAIT: begin
+        busy_o       = 'd1;
+        result_rsp_o = 'd1;
+      end
+      WRITE: begin
+        busy_o       = 'd1;
+        result_rsp_o = 'd1;
+      end
       
-      // exclude extra delay before response
-      if (next_state == AWAIT) result_rsp_o = 'd1;
-    end
-    else if (current_state == AWAIT || current_state == WRITE)
-    begin
-      busy_o       = 'd1;
-      result_rsp_o = 'd1;
-    end
-    else 
-    begin // if error?
-      busy_o       = 'dx;
-      result_rsp_o = 'dx;
-    end
+      default: begin // if error?
+        busy_o       = 'dx;
+        result_rsp_o = 'dx;
+      end
+    endcase    
   end
 
 endmodule

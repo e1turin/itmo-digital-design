@@ -51,7 +51,7 @@ module count_free_func_tb;
     #5 test_start_req = 0;
     @(posedge clk);
 
-    repeat(init_data + 1) // ????? wait +1 cycle because of state change  
+    repeat(init_data)
     begin
       @(posedge clk);
       if (!test_busy) $error("DUT is not busy on iteration = %0d", busy_iter);
@@ -59,17 +59,21 @@ module count_free_func_tb;
     end
 
     @(posedge clk);
-//    if (test_busy) $error("DUT is busy after waiting");
+    if (!test_busy) $error("DUT is not busy before ready flag");
     if (!test_result_rsp) $error("DUT have no result");
     
-    #35;
-    if (!test_result_rsp) $error("DUT dropped result before ready");
-    test_ready = 1;
+    #35 test_ready = 1;
+    if (!test_busy) $error("DUT is not busy on ready flag");
+    if (!test_result_rsp) $error("DUT dropped result before ready flag");
     
     @(posedge clk);
-    if (!test_result_rsp) $error("DUT dropped result too early");
+    if (!test_busy) $error("DUT is not busy after ready flag");
+    if (!test_result_rsp) $error("DUT dropped result too early on ready flag");
+    
     @(posedge clk);
-    if (test_result_rsp) $error("DUT have not dropped result");
+    #5; // ???? why it doesn't understand time after `@(posedge clk)` ????
+    if (test_busy) $error("DUT is busy after response complete");
+    if (test_result_rsp) $error("DUT have not dropped result response");
     
     #20 $finish;
   end
