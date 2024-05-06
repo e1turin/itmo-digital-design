@@ -94,8 +94,7 @@ module count_free_func # (
         enable_count = 'd1;
         set_count = 'd0;
       end
-//      AWAIT: enable_count = 'd0;
-      
+            
       default: ;// auto
     endcase
   end
