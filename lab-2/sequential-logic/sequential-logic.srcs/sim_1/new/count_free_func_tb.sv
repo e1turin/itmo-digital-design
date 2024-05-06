@@ -51,7 +51,7 @@ module count_free_func_tb;
     #5 test_start_req = 0;
     @(posedge clk);
 
-    repeat(init_data) 
+    repeat(init_data + 1) // ????? wait +1 cycle because of state change  
     begin
       @(posedge clk);
       if (!test_busy) $error("DUT is not busy on iteration = %0d", busy_iter);

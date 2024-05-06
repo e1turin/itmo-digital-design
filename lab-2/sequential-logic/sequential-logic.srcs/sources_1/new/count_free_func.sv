@@ -14,10 +14,11 @@ module count_free_func # (
 );
 
   typedef enum logic [2:0] {
-    IDLE,   // 1
-    READ,   // 2
-    COUNT,  // 3
-    AWAIT  // 4
+      IDLE  // 1
+    , READ  // 2
+    , COUNT // 3
+    , AWAIT // 4
+    , WRITE // 5
   } state_e;
 
   state_e current_state = IDLE;
@@ -69,7 +70,9 @@ module count_free_func # (
       IDLE  : if (start_req_i)      next_state = READ;
       READ  : if (!start_req_i)     next_state = COUNT;
       COUNT : if (count_rem == 'd0) next_state = AWAIT;
-      AWAIT : if (ready_i)          next_state = IDLE;
+      AWAIT : if (ready_i)          next_state = WRITE;
+      WRITE :                       next_state = IDLE;
+
       default: next_state = IDLE;
     endcase
   end
@@ -115,8 +118,11 @@ module count_free_func # (
     begin
       busy_o       = 'd1;
       result_rsp_o = 'd0;
+      
+      // exclude extra delay before response
+      if (next_state == AWAIT) result_rsp_o = 'd1;
     end
-    else if (current_state == AWAIT)
+    else if (current_state == AWAIT || current_state == WRITE)
     begin
       busy_o       = 'd1;
       result_rsp_o = 'd1;
