@@ -1,0 +1,21 @@
+# IGNORE ALL
+fpga/fpga.cache/*
+fpga/fpga.cache/**
+fpga/fpga.hw/*
+fpga/fpga.hw/**
+fpga/fpga.ip_user_files/*
+fpga/fpga.ip_user_files/**
+fpga/fpga.sim/*
+fpga/fpga.sim/**
+fpga/fpga.xpr/*
+fpga/fpga.xpr/**
+fpga/fpga.runs/*
+fpga/fpga.runs/**
+
+# tmp files
+*~ 
+
+# EXCEPT SOURCES
+!fpga/fpga.srcs/*
+!fpga/fpga.srcs/**
+
