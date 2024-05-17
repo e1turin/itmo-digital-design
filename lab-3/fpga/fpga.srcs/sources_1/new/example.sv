@@ -5,6 +5,6 @@ module example(
   output logic [15:0] LED
 );
 
-assign LED = SW;
+
 
 endmodule
