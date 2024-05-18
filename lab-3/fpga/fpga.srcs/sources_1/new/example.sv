@@ -8,7 +8,7 @@ module example(
   output  logic [7:0]  AN
 );
 
-assign LED = SW;
+  assign LED = SW;
 
 //  //assign LED = SW;
   localparam N = 'd8;
