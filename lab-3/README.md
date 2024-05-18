@@ -29,5 +29,4 @@
 Устройство 7-сегментных дисплеев:
 
 - https://digilent.com/reference/programmable-logic/nexys-a7/reference-manual#seven-segment_display
-
-
+- https://youtu.be/NyOlu_2OTXA?t=4283
