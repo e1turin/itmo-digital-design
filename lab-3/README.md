@@ -30,3 +30,9 @@
 
 - https://digilent.com/reference/programmable-logic/nexys-a7/reference-manual#seven-segment_display
 - https://youtu.be/NyOlu_2OTXA?t=4283
+
+Подавление дребезга:
+
+- http://www.labfor.ru/articles/debouncer_verilog
+- https://dzen.ru/a/Xur1F6FTWTX5gLj6
+- https://nabbla1.livejournal.com/204808.html

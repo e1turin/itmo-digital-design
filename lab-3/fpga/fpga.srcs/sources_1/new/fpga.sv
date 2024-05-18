@@ -91,6 +91,4 @@ module fpga(
     .t_valid_o  ( t_valid_o )
   );
 
-  
-
 endmodule
