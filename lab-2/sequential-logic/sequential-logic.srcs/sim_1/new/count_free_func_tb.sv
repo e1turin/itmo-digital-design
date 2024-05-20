@@ -18,7 +18,7 @@ module count_free_func_tb;
     .BIT_DEPTH ( N )
   ) dut (
     .clk          ( clk             ),
-    .rst          ( rst             ),
+    .arst         ( rst             ),
     .start_req_i  ( test_start_req  ),
     .start_data_i ( test_start_data ),
     .ready_i      ( test_ready           ),
@@ -49,6 +49,7 @@ module count_free_func_tb;
     @(posedge clk);
     
     #5 test_start_req = 0;
+    test_start_data = 0;
     @(posedge clk);
 
     repeat(init_data)
@@ -71,11 +72,11 @@ module count_free_func_tb;
     if (!test_result_rsp) $error("DUT dropped result too early on ready flag");
     
     @(posedge clk);
-    #5; // ???? why it doesn't understand time after `@(posedge clk)` ????
+    #5; // ???? why it doesn't understand time after `@(posedge clk)` ???? --- because of simulation! 
     if (test_busy) $error("DUT is busy after response complete");
     if (test_result_rsp) $error("DUT have not dropped result response");
     
-    #20 $finish;
+    #20 $stop;
   end
 
 endmodule
