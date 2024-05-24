@@ -11,6 +11,8 @@ module fpga(
   output  logic         CA, CB, CC, CD, CE, CF, CG, DP,
   output  logic [7:0]   AN
 );
+  localparam FREQ_DIV = 200_000;
+
   logic div_clk;
 
   logic arstn;
@@ -62,7 +64,7 @@ module fpga(
     
   freqdiv # (
     .BIT_DEPTH ( 32       ),
-    .MAX_COUNT ( 200_000  )
+    .MAX_COUNT ( FREQ_DIV )
   ) fd (
     .clk_i  ( CLK100MHZ ),
     .clk_o  ( div_clk   )
@@ -81,14 +83,14 @@ module fpga(
     .BIT_DEPTH  ( 3 ),
     .T_AMOUNT   ( 4 )
   ) arb(
-    .clk        ( btn_clk   ),
-    .arstn      ( arstn     ),
-    .ready_o    ( arb_ready ),
-    .t_data_i   ( t_data_i  ),
-    .t_valid_i  ( t_valid_i ),
-    .ready_o    ( arb_ready ),
-    .t_data_o   ( t_data_o  ),
-    .t_valid_o  ( t_valid_o )
+    .clk        ( btn_clk     ),
+    .arstn      ( arstn       ),
+    .t_data_i   ( t_data_i    ),
+    .t_valid_i  ( t_valid_i   ),
+    .ready_o    ( arb_ready   ),
+    .t_data_o   ( t_data_o    ),
+    .t_valid_o  ( t_valid_o   ),
+    .t_number_o ( t_number    )
   );
 
 endmodule

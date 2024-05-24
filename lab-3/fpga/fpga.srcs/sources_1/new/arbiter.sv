@@ -50,7 +50,9 @@ module arbiter # (
       4'b???1: grant_ptr = 'd0;
       4'b??10: grant_ptr = 'd1;
       4'b?100: grant_ptr = 'd2;
-      4'b1000: grant_ptr = 'd3;      
+      4'b1000: grant_ptr = 'd3;
+
+      default: grant_ptr = 'd3;
     endcase
   end
 

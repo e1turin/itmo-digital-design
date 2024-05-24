@@ -11,6 +11,7 @@ module display7seg (
 
   localparam DATA_DEPTH = 3;
   localparam NUMBER_DEPTH = 4;
+  localparam N_DIGITS = 8;
 
   typedef enum bit { ON = 0, OFF = 1 } enable_segment_e;
   typedef enum bit [7:0]
@@ -45,11 +46,10 @@ module display7seg (
   } 
   seven_seg_encoding_e;
   
-  localparam N_DIGITS = 8;
   logic [N_DIGITS-1:0] digit;
   
-  seven_seg_encodig_e show_number;
-  seven_seg_encodig_e show_data;
+  seven_seg_encoding_e show_number;
+  seven_seg_encoding_e show_data;
 
   // decode data & transaction number
   always_comb
@@ -88,11 +88,11 @@ module display7seg (
   // update illuminated digit position
   always_ff @(posedge clk or negedge arstn)
   begin
-    if (arstn)  digit <= 'b1;
+    if (!arstn) digit <= 'b1;
     else        digit <= {digit[N_DIGITS-2:0], digit[N_DIGITS-1]};
   end
   
-  // split display in 2 equal parts: number + data
+  // split display in 2 equal parts: number & data
   always_comb
   begin
     DIGITS = digit;
