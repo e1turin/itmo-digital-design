@@ -3,8 +3,17 @@
 
 - - -
 
+## Комментарии
+
+ссылки на чужие работы:
+
+- https://github.com/AaLexUser/Functional-circuitry
+- https://github.com/nibitoff/Functional-circuitry
+
 Чтобы начать можно проверить работаспособность FPGA с помощью простого прямого
 подключения светодиодов к сдвиговым переключателям.
+
+### Начало работы
 
 В Vivado нужно создать проект для подходящей платы:
 1. В поиске набираем кодовые названия "100t" и "CSG324", выбираем самую
@@ -25,14 +34,24 @@
 - -> https://digilent.com/reference/programmable-logic/nexys-a7/reference-manual
 - -> https://digilent.com/reference/_media/reference/programmable-logic/nexys-a7/nexys-a7_rm.pdf
 
+### Работа с FPGA
+
+#### 7-сегментный дисплей
 
 Устройство 7-сегментных дисплеев:
 
-- https://digilent.com/reference/programmable-logic/nexys-a7/reference-manual#seven-segment_display
-- https://youtu.be/NyOlu_2OTXA?t=4283
+- [reference-manual#seven-segment_display](https://digilent.com/reference/programmable-logic/nexys-a7/reference-manual#seven-segment_display)
+- [Занятие 2 (2023-24): Схемы с тактовым сигналом и состоянием. Отечественный симулятор Delta Design.](https://youtu.be/NyOlu_2OTXA?t=4283)
 
-Подавление дребезга:
+#### Кнопки
 
-- http://www.labfor.ru/articles/debouncer_verilog
-- https://dzen.ru/a/Xur1F6FTWTX5gLj6
-- https://nabbla1.livejournal.com/204808.html
+Подавление дребезга можно сделать по разному, суть обычно состоит в том, чтобы *дождаться* сигнала в 
+следующий момент
+
+- [http://www.labfor.ru/articles/debouncer_verilog](http://www.labfor.ru/articles/debouncer_verilog)
+- [https://dzen.ru/a/Xur1F6FTWTX5gLj6](https://dzen.ru/a/Xur1F6FTWTX5gLj6)
+- [https://nabbla1.livejournal.com/204808.html](https://nabbla1.livejournal.com/204808.html)
+
+При этом, на кнопку `CPU_RESETN` не нужно весить гаситель дребезга.
+
+- [https://www.eevblog.com/forum/projects/necessary-to-debound-a-reset-button/](https://www.eevblog.com/forum/projects/necessary-to-debound-a-reset-button/)

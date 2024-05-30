@@ -29,29 +29,55 @@ module button_debouncer_tb;
     #12 arstn = 0;
     #3  arstn = 1;   
 
+    /// first part
+
     #10;
-    repeat(2)
+    repeat(15) // even times of inversions
     begin
-      repeat(15)
-      begin
-        btn_i = ~btn_i;
-        #12;
-      end
-      
-      repeat(10) @(posedge clk);
-      
-      #5 if (btn_state_o != 1) $error("DUT should say 1");
-      
-      repeat(15)
-      begin
-        btn_i = ~btn_i;
-        #12;
-      end
-      
-      repeat(10) @(posedge clk);
-      
-      #5 if (btn_state_o != 0) $error("DUT should say 0");
+      btn_i = ~btn_i;
+      #12;
     end
+    
+    repeat(10) @(posedge clk);
+    
+    #5 if (btn_state_o != 1) $error("DUT should say 1");
+    
+    repeat(15) // even times of inversion
+    begin
+      btn_i = ~btn_i;
+      #12;
+    end
+    
+    repeat(10) @(posedge clk);
+    
+    #5 if (btn_state_o != 0) $error("DUT should say 0");
+  
+    /// second part
+  
+    #10;
+    repeat(10) // odd times of inversion
+    begin
+      btn_i = ~btn_i;
+      #12;
+    end
+    
+    repeat(10) @(posedge clk);
+    
+    #5 if (btn_state_o != 0) $error("DUT should say 0");
+    
+    #5 btn_i = ~btn_i;
+    repeat(12) @(posedge clk);
+    
+    #10;
+    repeat(10) // odd times of inversion
+    begin
+      btn_i = ~btn_i;
+      #12;
+    end
+    
+    repeat(10) @(posedge clk);
+    
+    #5 if (btn_state_o != 1) $error("DUT should say 1");
   
     #20 $stop;
 

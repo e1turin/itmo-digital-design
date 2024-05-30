@@ -22,14 +22,18 @@ module example(
   logic clk;  
 
   logic arstn;
+  assign arstn = CPU_RESETN;
   
-  button_debouncer # (
-    .WAIT_TIME ( 100_000 )
-  ) debounce_cpu_resetn (
-    .clk    ( CLK100MHZ   ),
-    .btn_i  ( CPU_RESETN  ),
-    .btn_state_o  ( arstn       )
-  );
+//  button_debouncer # (
+//    .WAIT_TIME ( 100_000 )
+//  ) debounce_cpu_resetn (
+//    .clk          ( CLK100MHZ   ),
+//    .arstn        (),
+//    .btn_i        ( CPU_RESETN  ),
+//    .btn_state_o  ( arstn       ),  
+//    .btn_up_o     (),
+//    .btn_down_o   ()
+//  );
 
   freqdiv # (
     .BIT_DEPTH ( 32 ),
@@ -41,27 +45,37 @@ module example(
   
   logic [4:0] digit = 0;
   logic first_part = 0;
-  assign {LED16_R, LED16_G, LED16_B} = {3{first_part}};
-  assign {LED17_R, LED17_G, LED17_B} = {3{~first_part}};
+  
 
   logic btn_clk;
+  
+  assign {LED17_R, LED17_G, LED17_B} = {3{arstn}};
+  assign {LED16_R, LED16_G, LED16_B} = {3{btn_clk}};
+
   button_debouncer # (
     .WAIT_TIME ( 100_000 )
   ) debounce_center_button (
-    .clk    ( CLK100MHZ ),
-    .btn_i  ( BTNC      ),
-    .btn_o  ( btn_clk   )
+    .clk          ( CLK100MHZ ),
+    .arstn        ( arstn     ),
+    .btn_i        ( BTNC      ),
+    .btn_state_o  ( btn_clk   ),
+    .btn_up_o     (),
+    .btn_down_o   ()
   );
   
-  always_ff @(posedge clk or negedge arstn)
+  always_ff @(posedge clk)
   begin
-    if (!arstn) first_part <= ~first_part;
-    else 
-      if (btn_clk) first_part <= ~first_part;
-      else 
-        if (first_part && digit >= 3)       digit <= 0;
-        else if (!first_part && digit >= 7) digit <= 3;
-        else                                digit <= digit + 1;
+    if (btn_clk) first_part <= ~first_part;
+  end
+    
+  always_ff @(posedge clk)
+  begin
+    if (first_part)
+      if (digit >= 3) digit <= 0;
+      else            digit <= digit + 1;
+    else
+      if (digit >= 7) digit <= 4;
+      else            digit <= digit + 1;
   end
  
   always_comb
