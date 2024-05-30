@@ -28,7 +28,7 @@ module example(
   ) debounce_cpu_resetn (
     .clk    ( CLK100MHZ   ),
     .btn_i  ( CPU_RESETN  ),
-    .btn_o  ( arstn       )
+    .btn_state_o  ( arstn       )
   );
 
   freqdiv # (
@@ -59,9 +59,9 @@ module example(
     else 
       if (btn_clk) first_part <= ~first_part;
       else 
-        if (first_part && digit >= 3) digit <= 0;
-        else if (digit >= 7)          digit <= 3;
-        else                          digit <= digit + 1;
+        if (first_part && digit >= 3)       digit <= 0;
+        else if (!first_part && digit >= 7) digit <= 3;
+        else                                digit <= digit + 1;
   end
  
   always_comb
