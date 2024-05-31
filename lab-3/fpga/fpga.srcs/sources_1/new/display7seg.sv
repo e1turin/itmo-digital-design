@@ -13,8 +13,8 @@ module display7seg (
   localparam NUMBER_DEPTH = 4;
   localparam N_DIGITS = 8;
 
-  typedef enum bit { ON = 0, OFF = 1 } enable_e;
-  typedef enum bit [7:0]
+  typedef enum logic { ON = 0, OFF = 1 } enable_e;
+  typedef enum logic [7:0]
   { //      {a,   b,    c,    d,    e,    f,    g,    p  }
     SPACE = {8{OFF}},
     X0    = {ON,  ON,   ON,   ON,   ON,   ON,   OFF,  OFF},
@@ -31,15 +31,16 @@ module display7seg (
   } 
   seven_seg_encoding_e;
   
-  logic [N_DIGITS-1:0] digit;
-  assign DIGITS_o = digit;
+  enable_e [N_DIGITS-1:0] digits;
+  assign DIGITS_o = digits;
   
   seven_seg_encoding_e show_number;
   seven_seg_encoding_e show_data;
     
   logic left_part_f;
+  assign left_part_f = &digits[3:0]; // active level is 0 so use logic multiplication
   
-  assign SEGMENTS_o = left_part_f ? show_number : show_data;
+  assign SEGMENTS_o = (left_part_f == ON) ? show_number : show_data;
 
   // decode data & transaction number
   always_comb
@@ -78,25 +79,8 @@ module display7seg (
   // update illuminated digit position
   always_ff @(posedge clk or negedge arstn)
   begin
-    if (!arstn) digit <= ON;
-    else        digit <= {digit[N_DIGITS-2:0], digit[N_DIGITS-1]};
-  end
-
-  // split display in 2 equal parts: number & data
-  always_comb
-  begin
-    case (digit)
-      'b0000_0001: left_part_f = 0;
-      'b0000_0010: left_part_f = 0;
-      'b0000_0100: left_part_f = 0;
-      'b0000_1000: left_part_f = 0;
-      'b0001_0000: left_part_f = 1;
-      'b0010_0000: left_part_f = 1;
-      'b0100_0000: left_part_f = 1;
-      'b1000_0000: left_part_f = 1;
-      
-      default: left_part_f = 0;
-    endcase 
+    if (!arstn) digits <= {{7{OFF}}, ON};
+    else        digits <= {digits[N_DIGITS-2:0], digits[N_DIGITS-1]};
   end
 
 endmodule
