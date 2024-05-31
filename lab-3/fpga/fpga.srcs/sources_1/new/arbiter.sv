@@ -1,16 +1,5 @@
 `timescale 1ns / 1ps
 
-//interface transaction_if # (
-//  parameter BIT_DEPTH = 8
-//);
-//  logic [BIT_DEPTH-1:0] data;
-//  logic                 valid;
-
-//  modport SND (input  data, input   valid);
-//  modport RCV (output data, output  valid);
-
-//endinterface
-
 
 module arbiter # (
   parameter BIT_DEPTH = 8,
@@ -29,15 +18,6 @@ module arbiter # (
   typedef logic [T_AMOUNT-1:0] bus;
   
   logic [T_AMOUNT-1:0] req = 'd0;  
-//  logic valid_1;
-//  logic valid_2;
-//  logic valid_3;
-//  logic valid_4;
-  
-//  assign valid_1 = t_valid_i[0];
-//  assign valid_2 = t_valid_i[1];
-//  assign valid_3 = t_valid_i[2];
-//  assign valid_4 = t_valid_i[3];
 
   logic  req_status;
   assign req_status = | req;
@@ -60,11 +40,7 @@ module arbiter # (
   begin
     if (!arstn || !req_status)
     begin
-//      req <= {t_valid_i[3],
-//              t_valid_i[2], 
-//              t_valid_i[1],
-//              t_valid_i[0]};
-      req <= t_valid_i;
+      req <= t_valid_i; // TODO: <= 0;
     end
     else
     begin
@@ -78,12 +54,6 @@ module arbiter # (
     begin
       t_valid_o = 'd1;
       t_data_o  = t_data_i[grant_ptr];
-//      case (grant_ptr)
-//        2'd0: t_data_o = t_data_i[0];
-//        2'd1: t_data_o = t_data_i[1];
-//        2'd2: t_data_o = t_data_i[2];
-//        2'd3: t_data_o = t_data_i[3];
-//      endcase
       ready_o   = 'd0;
       case (grant_ptr)
         2'd0: t_number_o = 'b0001;

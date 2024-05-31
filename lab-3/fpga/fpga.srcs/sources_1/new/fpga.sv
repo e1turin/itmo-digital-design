@@ -11,18 +11,23 @@ module fpga(
   output  logic         CA, CB, CC, CD, CE, CF, CG, DP,
   output  logic [7:0]   AN
 );
-  localparam FREQ_DIV = 200_000;
+  localparam FREQ_DIV_RATE = 200_000;
+  
+  assign LED = SW;
 
+  logic clk;
+  assign clk = CLK100MHZ;
+  
   logic div_clk;
 
   logic arstn;
   assign arstn = CPU_RESETN;
 
   logic [7:0] digits;
-  assign digits = AN;
+  assign AN = digits;
 
   logic [7:0] segs;
-  assign segs = {CA, CB, CC, CD, CE, CF, CG, DP};
+  assign {CA, CB, CC, CD, CE, CF, CG, DP} = segs;
    
   logic btn_clk;
   assign btn_clk = BTNC;
@@ -63,20 +68,21 @@ module fpga(
   logic [3:0] t_number;
     
   freqdiv # (
-    .BIT_DEPTH ( 32       ),
-    .MAX_COUNT ( FREQ_DIV )
+    .BIT_DEPTH ( 32             ),
+    .MAX_COUNT ( FREQ_DIV_RATE  )
   ) fd (
-    .clk_i  ( CLK100MHZ ),
+    .clk_i  ( clk       ),
+    .arstn  ( arstn     ),
     .clk_o  ( div_clk   )
   );
   
   display7seg display (
-    .clk      ( div_clk   ),
-    .arstn    ( arstn     ),
-    .data     ( t_data_o  ),
-    .number   ( t_number  ),
-    .DIGITS   ( digits    ),
-    .SEGMENTS ( segs      )
+    .clk        ( div_clk   ),
+    .arstn      ( arstn     ),
+    .data_i     ( t_data_o  ),
+    .number_i   ( t_number  ),
+    .DIGITS_o   ( digits    ),
+    .SEGMENTS_o ( segs      )
   );
 
   arbiter # (

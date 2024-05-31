@@ -6,17 +6,26 @@ module freqdiv
   parameter MAX_COUNT = 5
 ) (
   input   logic clk_i,
+  input   logic arstn,
   output  logic clk_o
 );
-
-logic [BIT_DEPTH-1:0] count = 0;
-
-always_ff @(posedge clk_i) begin
-  count <= count + 1;
-  if (count == MAX_COUNT) begin
-    count <= 0;
-    clk_o <= ~clk_o;
+  
+  logic [BIT_DEPTH-1:0] count = 0;
+  
+  always_ff @(posedge clk_i or negedge arstn) 
+  begin
+    if (!arstn)
+    begin
+      count <= 0;
+      clk_o <= 0;
+    end
+    else if (count == MAX_COUNT)
+    begin
+      count <= 0;
+      clk_o <= ~clk_o;
+    end
+    else count <= count + 1;
+  
   end
-end
 
 endmodule

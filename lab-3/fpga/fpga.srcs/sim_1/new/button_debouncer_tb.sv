@@ -24,6 +24,8 @@ module button_debouncer_tb;
 
   always #20 clk = ~clk;
   
+  localparam WAIT_TIME = 20;
+  
   initial
   begin
     #12 arstn = 0;
@@ -38,7 +40,7 @@ module button_debouncer_tb;
       #12;
     end
     
-    repeat(10) @(posedge clk);
+    repeat(WAIT_TIME) @(posedge clk);
     
     #5 if (btn_state_o != 1) $error("DUT should say 1");
     
@@ -48,7 +50,7 @@ module button_debouncer_tb;
       #12;
     end
     
-    repeat(10) @(posedge clk);
+    repeat(WAIT_TIME) @(posedge clk);
     
     #5 if (btn_state_o != 0) $error("DUT should say 0");
   
@@ -61,7 +63,7 @@ module button_debouncer_tb;
       #12;
     end
     
-    repeat(10) @(posedge clk);
+    repeat(WAIT_TIME) @(posedge clk);
     
     #5 if (btn_state_o != 0) $error("DUT should say 0");
     
@@ -75,7 +77,7 @@ module button_debouncer_tb;
       #12;
     end
     
-    repeat(10) @(posedge clk);
+    repeat(WAIT_TIME) @(posedge clk);
     
     #5 if (btn_state_o != 1) $error("DUT should say 1");
   
