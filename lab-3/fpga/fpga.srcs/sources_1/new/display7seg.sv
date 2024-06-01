@@ -38,9 +38,10 @@ module display7seg (
   seven_seg_encoding_e show_data;
     
   logic left_part_f;
-  assign left_part_f = &digits[3:0]; // active level is 0 so use logic multiplication
+  // "if all the right signals are different"
+  assign left_part_f = &(digits[3:0]^{4{ON}});
   
-  assign SEGMENTS_o = (left_part_f == ON) ? show_number : show_data;
+  assign SEGMENTS_o = left_part_f ? show_number : show_data;
 
   // decode data & transaction number
   always_comb
