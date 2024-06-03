@@ -51,7 +51,13 @@
 - [http://www.labfor.ru/articles/debouncer_verilog](http://www.labfor.ru/articles/debouncer_verilog)
 - [https://dzen.ru/a/Xur1F6FTWTX5gLj6](https://dzen.ru/a/Xur1F6FTWTX5gLj6)
 - [https://nabbla1.livejournal.com/204808.html](https://nabbla1.livejournal.com/204808.html)
+- Некоторый смысл, другая реализация: https://www.fpga4student.com/2017/04/simple-debouncing-verilog-code-for.html
+- Некоторая реализация, со странным результатом: https://www.fpga4fun.com/Debouncer2.html
 
 При этом, на кнопку `CPU_RESETN` не нужно весить гаситель дребезга.
 
 - [https://www.eevblog.com/forum/projects/necessary-to-debound-a-reset-button/](https://www.eevblog.com/forum/projects/necessary-to-debound-a-reset-button/)
+
+Суть подавления дребезга состоит в том, чтобы "перенести тактовый сигнал в другую доменную зону", 
+т.е. считывать его не так часто как хотелось бы. Без этого понимания, я почему-то не мог написать 
+нормально работающий дебаунсер.
