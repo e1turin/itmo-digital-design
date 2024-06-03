@@ -20,8 +20,6 @@ module fpga(
   logic clk;
   assign clk = CLK100MHZ;
   
-  logic div_clk;
-
   logic arstn;
   assign arstn = CPU_RESETN;
 
@@ -30,9 +28,11 @@ module fpga(
 
   logic [7:0] segs;
   assign {CA, CB, CC, CD, CE, CF, CG, DP} = segs;
-   
+
   logic btn_clk;
-  assign btn_clk = BTNC;
+
+  logic btn_i;
+  assign btn_i = BTNC;  
   
   logic [2:0] RGB_LED_1, RGB_LED_2;
   assign {LED16_R, LED16_G, LED16_B} = RGB_LED_1;
@@ -68,6 +68,18 @@ module fpga(
     .number_i   ( t_number  ),
     .DIGITS_o   ( digits    ),
     .SEGMENTS_o ( segs      )
+  );
+  
+  button_debouncer # (
+    .BIT_DEPTH ( 32      ),
+    .WAIT_TIME ( 100_000 )
+  ) btn_dbcr (
+    .clk          ( clk     ),
+    .arstn        ( arstn   ),
+    .btn_i        ( btn_i   ),
+    .btn_state_o  ( btn_clk ),
+    .btn_up_o     (),
+    .btn_down_o   ()
   );
 
   arbiter # (
