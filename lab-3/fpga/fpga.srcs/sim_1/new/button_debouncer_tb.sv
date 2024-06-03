@@ -11,7 +11,7 @@ module button_debouncer_tb;
   logic btn_down_o;
 
   button_debouncer # (
-    .BIT_DEPTH ( 32 ),
+    .BIT_DEPTH ( 8  ),
     .WAIT_TIME ( 10 )
   ) dut (
     .clk          ( clk         ),
