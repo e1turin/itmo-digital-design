@@ -12,6 +12,8 @@ module fpga(
   output  logic [7:0]   AN
 );
   localparam FREQ_DIV_RATE = 100_000;
+  localparam ARB_BIT_DEPTH = 3;
+  localparam ARB_TRXS = 4;
   
   assign LED = SW;
 
@@ -58,18 +60,9 @@ module fpga(
   assign RGB_LED_2 = {3{arb_ready}};
   
   logic [3:0] t_number;
-    
-  freqdiv # (
-    .BIT_DEPTH ( 32             ),
-    .MAX_COUNT ( FREQ_DIV_RATE  )
-  ) fd (
-    .clk_i  ( clk       ),
-    .arstn  ( arstn     ),
-    .clk_o  ( div_clk   )
-  );
-  
+
   display7seg display (
-    .clk        ( div_clk   ),
+    .clk        ( clk       ),
     .arstn      ( arstn     ),
     .data_i     ( t_data_o  ),
     .number_i   ( t_number  ),
@@ -78,8 +71,8 @@ module fpga(
   );
 
   arbiter # (
-    .BIT_DEPTH  ( 3 ),
-    .T_AMOUNT   ( 4 )
+    .BIT_DEPTH  ( ARB_BIT_DEPTH ),
+    .T_AMOUNT   ( ARB_TRXS      )
   ) arb(
     .clk        ( btn_clk     ),
     .arstn      ( arstn       ),

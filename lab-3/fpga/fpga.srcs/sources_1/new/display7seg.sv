@@ -1,6 +1,11 @@
 `timescale 1ns / 1ps
 
-module display7seg (
+module display7seg
+# (
+  parameter FREQ_DIV_BIT_DEPTH  = 32,
+  parameter FREQ_DIV_RATE       = 100_000
+)
+(
   input   logic       clk,
   input   logic       arstn,
   input   logic [2:0] data_i,
@@ -8,11 +13,10 @@ module display7seg (
   output  logic [7:0] DIGITS_o,
   output  logic [7:0] SEGMENTS_o
 );
-  localparam FREQ_DIV_BIT_DEPTH = 32;
-  localparam FREQ_DIV_RATE = 100_000;
-  localparam DATA_DEPTH = 3;
+
+  localparam DATA_DEPTH   = 3;
   localparam NUMBER_DEPTH = 4;
-  localparam N_DIGITS = 8;
+  localparam N_DIGITS     = 8;
 
   typedef enum logic { ON = 0, OFF = 1 } enable_e;
   typedef enum logic [7:0]
@@ -90,10 +94,11 @@ module display7seg (
   );
 
   // update illuminated digit position
+  // uses the fact that each part of display shows only 1 decimal digit
   always_ff @(posedge div_clk or negedge arstn)
   begin
     if (!arstn) digits <= {{7{OFF}}, ON};
-    else        digits <= {digits[N_DIGITS-2:0], digits[N_DIGITS-1]};
+    else        digits <= {digits[N_DIGITS-5:0], digits[N_DIGITS-1:N_DIGITS-4]};
   end
 
 endmodule
