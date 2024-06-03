@@ -8,7 +8,8 @@ module display7seg (
   output  logic [7:0] DIGITS_o,
   output  logic [7:0] SEGMENTS_o
 );
-
+  localparam FREQ_DIV_BIT_DEPTH = 32;
+  localparam FREQ_DIV_RATE = 100_000;
   localparam DATA_DEPTH = 3;
   localparam NUMBER_DEPTH = 4;
   localparam N_DIGITS = 8;
@@ -38,7 +39,7 @@ module display7seg (
   seven_seg_encoding_e show_data;
     
   logic left_part_f;
-  // "if all the right signals are different"
+  // "if all the right side signals are not enabled"
   assign left_part_f = &(digits[3:0]^{4{ON}});
   
   assign SEGMENTS_o = left_part_f ? show_number : show_data;
@@ -76,9 +77,20 @@ module display7seg (
       endcase
     end
   end
+  
+  logic div_clk;
+
+  freqdiv # (
+    .BIT_DEPTH ( FREQ_DIV_BIT_DEPTH ),
+    .MAX_COUNT ( FREQ_DIV_RATE      )
+  ) fd (
+    .clk_i  ( clk     ),
+    .arstn  ( arstn   ),
+    .clk_o  ( div_clk )
+  );
 
   // update illuminated digit position
-  always_ff @(posedge clk or negedge arstn)
+  always_ff @(posedge div_clk or negedge arstn)
   begin
     if (!arstn) digits <= {{7{OFF}}, ON};
     else        digits <= {digits[N_DIGITS-2:0], digits[N_DIGITS-1]};
