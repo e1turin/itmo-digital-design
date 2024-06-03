@@ -10,7 +10,9 @@ module display7seg_tb;
   logic [7:0] digits_o;
   logic [7:0] segments_o;
   
-  display7seg dut (
+  display7seg # ( 
+    .FREQ_DIV_RATE (1)
+  ) dut (
     .clk        ( clk         ),
     .arstn      ( arstn       ),
     .data_i     ( data_i      ),
