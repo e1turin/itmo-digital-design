@@ -19,8 +19,8 @@ module arbiter # (
   
   logic [T_AMOUNT-1:0] req = 'd0;  
 
-  logic  req_status;
-  assign req_status = | req;
+  logic  prepared_f;
+  assign prepared_f = | req;
   
   logic [1:0] grant_ptr;
 
@@ -38,19 +38,14 @@ module arbiter # (
 
   always_ff @(posedge clk or negedge arstn)
   begin
-    if (!arstn || !req_status)
-    begin
-      req <= t_valid_i; // TODO: <= 0;
-    end
-    else
-    begin
-      req[grant_ptr] = 'd0;
-    end
+    if (!arstn)           req <= 0;
+    else if (!prepared_f) req <= t_valid_i;
+    else                  req[grant_ptr] = 'd0;
   end
 
   always_comb
   begin
-    if (req_status)
+    if (prepared_f)
     begin
       t_valid_o = 'd1;
       t_data_o  = t_data_i[grant_ptr];

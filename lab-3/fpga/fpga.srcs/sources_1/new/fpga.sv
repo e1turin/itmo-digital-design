@@ -11,7 +11,7 @@ module fpga(
   output  logic         CA, CB, CC, CD, CE, CF, CG, DP,
   output  logic [7:0]   AN
 );
-  localparam FREQ_DIV_RATE = 200_000;
+  localparam FREQ_DIV_RATE = 100_000;
   
   assign LED = SW;
 
@@ -43,14 +43,6 @@ module fpga(
           t2_data, t2_valid,
           t3_data, t3_valid,
           t4_data, t4_valid} = SW;
-//  assign t1_data = SW[0:2];
-//  assign t1_valid = SW[3];
-//  assign t2_data = SW[4:6];
-//  assign t1_valid = SW[7];
-//  assign t3_data = SW[8:10];
-//  assign t1_valid = SW[11];
-//  assign t4_data = SW[12:14];
-//  assign t1_valid = SW[15];
   
   logic [2:0] t_data_i [3:0];
   assign t_data_i = {t1_data,  t2_data,  t3_data,  t4_data};
