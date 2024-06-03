@@ -6,33 +6,29 @@ module arbiter_tb;
   localparam N = 8; 
   
   logic clk = 0;
-  logic arst = 'd0;
+  logic arst = 1;
   logic ready;
-
-  transaction_if # ( .BIT_DEPTH ( N ) )  t_1();
-  transaction_if # ( .BIT_DEPTH ( N ) )  t_2();
-  transaction_if # ( .BIT_DEPTH ( N ) )  t_3();
-  transaction_if # ( .BIT_DEPTH ( N ) )  t_4();
-
-  transaction_if # ( .BIT_DEPTH ( N ) )  t_o();
+  
+  logic [N-1:0] t_data_i [3:0], t_data_o;
+  logic [N-1:0] t_valid_i;
+  logic         t_valid_o;
 
   logic [N-1:0] test_data_out;
-  assign test_data_out = t_o.data;
+  assign test_data_out = t_data_o;
 
   logic test_valid_out;
-  assign test_valid_out = t_o.valid;
+  assign test_valid_out = t_valid_o;
 
   arbiter # ( 
     .BIT_DEPTH ( N )
   ) dut ( 
-     .clk     ( clk   ),
-     .arst    ( arst  ),
-     .ready_o ( ready ),
-     .t_1_i   ( t_1.RCV ),
-     .t_2_i   ( t_2.RCV ),
-     .t_3_i   ( t_3.RCV ),
-     .t_4_i   ( t_4.RCV ),
-     .t_o     ( t_o.SND )
+     .clk       ( clk       ),
+     .arstn     ( arst      ),
+     .ready_o   ( ready     ),
+     .t_data_i  ( t_data_i  ),
+     .t_valid_i ( t_valid_i ),
+     .t_data_o  ( t_data_o  ),
+     .t_valid_o ( t_valid_o )
   );
 
   logic [N-1:0] test_data_1 = 10;
@@ -44,24 +40,21 @@ module arbiter_tb;
 
   initial
   begin
-    t_1.valid = 'd0;
-    t_2.valid = 'd0;
-    t_3.valid = 'd0;
-    t_4.valid = 'd0;
-    #15 arst = 'd1;
-    #10 arst = 'd0;
+    t_valid_i = 'd0;
+
+    #15 arst = 'd0;
+    #10 arst = 'd1;
     #5;
     if (!ready) $error("Arbiter not ready after reset");
 
     #10;
-    t_1.data = test_data_1;
-    t_2.data = test_data_2;
-    t_3.data = test_data_3;
-    t_4.data = test_data_4;
+    t_data_i = {test_data_1, 
+                test_data_2,
+                test_data_3,
+                test_data_4};
     
     #5;
-    t_1.valid = 'd1;
-    t_2.valid = 'd1;
+    t_valid_i = 4'b0011;
 
     repeat(2)
     begin
@@ -70,17 +63,11 @@ module arbiter_tb;
       if (ready) $error("Arbiter ready when transaction exists");
     end
     
-    t_1.valid = 'd0;
-    t_2.valid = 'd0;
-    t_3.valid = 'd0;
-    t_4.valid = 'd0;
+    t_valid_i = 4'b0000;
     
     @(posedge clk);
     #5;
-    t_1.valid = 'd0;
-    t_2.valid = 'd1;
-    t_3.valid = 'd1;
-    t_4.valid = 'd1;
+    t_valid_i = 4'b0111;
     
     repeat(3)
     begin

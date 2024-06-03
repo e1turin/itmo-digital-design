@@ -58,7 +58,7 @@ module shiftreg_tb;
     
     #20;
     
-    $finish;
+    $stop;
   end
   
 

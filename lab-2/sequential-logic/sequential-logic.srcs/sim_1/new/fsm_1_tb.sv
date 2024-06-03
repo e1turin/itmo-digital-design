@@ -1,5 +1,33 @@
 `timescale 1ns / 1ps
 
+module golden_fsm_1(
+  input logic clk,
+  input logic reset,
+  input integer a,
+  input integer b,
+  output logic valid,
+  output integer result
+);
+
+  initial
+  begin
+    if(reset)
+    begin
+      result = 0;
+      valid = 0;
+    end
+    else
+    begin
+      repeat(9)
+      begin
+        @(posedge clk); 
+      end
+      result = (a/2+b)*8 + (a-b/2)*4;
+      valid = 1;
+    end
+  end
+
+endmodule
 
 module fsm_1_tb;
   
@@ -49,7 +77,7 @@ module fsm_1_tb;
         2**N
       );
     end
-    #20 $finish;
+    #20 $stop;
   end
 
 endmodule
